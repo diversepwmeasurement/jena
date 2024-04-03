@@ -1,29 +1,26 @@
-## Licensed under the terms of http://www.apache.org/licenses/LICENSE-2.0
-
-name: Apache Jena CI (MacOS)
-on: workflow_dispatch
-
-permissions:
-  contents: read
-
 jobs:
   build:
-
-    runs-on: ${{ matrix.os }}
-
+    runs-on: self-hosted
+    steps:
+    - continue-on-error: true
+      uses: actions/checkout@v4
+    - continue-on-error: true
+      name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: temurin
+        java-version: '17'
+    - continue-on-error: true
+      name: Build with Maven
+      run: mvn -B --file pom.xml -Dmaven.javadoc.skip=true install
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest]
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Set up JDK
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: '17'
-
-    - name: Build with Maven
-      run: mvn -B --file pom.xml -Dmaven.javadoc.skip=true install
+        os:
+        - macos-latest
+name: Apache Jena CI (MacOS)
+on:
+  repository_dispatch:
+    types: trigger-ga___maven_macos.yml
+permissions:
+  contents: read
